@@ -44,6 +44,6 @@ function transformSdk<T extends OriginalSdk>(sdk: T): TransformedSdk<T> {
   return transformed as TransformedSdk<T>;
 }
 
-const eyeOfSauron = transformSdk(sdk);
+const Eye = transformSdk(sdk);
 
-export default eyeOfSauron;
+export default Eye;
