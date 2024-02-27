@@ -2,11 +2,14 @@ import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import generateOperationsFromSchema from './generateOperationsFromSchema';
 import { WATSON_URL } from '../lib/constants';
 
+import { rimraf } from 'rimraf';
+
 function createEyeOfSauronFolder(folder: string, subfolder: string) {
-  if (!existsSync(folder)) {
-    mkdirSync(`${folder}`, { recursive: true })
-    mkdirSync(`${folder}/${subfolder}`, { recursive: true })
+  if (existsSync(folder)) {
+    rimraf.sync(folder);
   }
+  mkdirSync(`${folder}`, { recursive: true })
+  mkdirSync(`${folder}/${subfolder}`, { recursive: true })
 }
 
 async function createOrUpdateQueriesAndMutations(folder: string) {

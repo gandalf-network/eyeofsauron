@@ -3,10 +3,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 function transpileToJS(dir: string): void {
-    let tempDir = '';
-    tempDir = dir + '_temp';
-    fs.renameSync(dir, tempDir);
-
     const compilerOptions: ts.CompilerOptions = {
         target: ts.ScriptTarget.ES5,
         module: ts.ModuleKind.CommonJS,
@@ -14,7 +10,7 @@ function transpileToJS(dir: string): void {
         declaration: true,
         declarationDir: dir,
     };
-    const fileNames = getFilesRecursive(tempDir)
+    const fileNames = getFilesRecursive(dir)
         .filter(fileName => fileName.endsWith('.ts'));
 
     const program = ts.createProgram(fileNames, compilerOptions);
@@ -24,12 +20,6 @@ function transpileToJS(dir: string): void {
         console.error('Compilation failed');
     } else {
         console.log('Compilation successful');
-    }
-
-    if (tempDir) {
-        if (fs.existsSync(tempDir)) {
-            fs.rmdirSync(tempDir, { recursive: true });
-        }
     }
 }
 
