@@ -1,0 +1,49 @@
+import { GraphQLClient } from "graphql-request";
+import { Sdk, getSdk } from "./gql/__generated__";
+import { WATSON_URL } from './src/lib/constants';
+
+const client = new GraphQLClient(WATSON_URL);
+
+const sdk: Sdk  = getSdk(client)
+
+interface OriginalSdk {
+  [key: string]: (...args: any[]) => Promise<{ data: { [key: string]: any }, errors?: any, status: number }>;
+}
+
+type TransformedSdk<T> = {
+  [P in keyof T]: T[P] extends (...args: any[]) => Promise<{ data: { [key in P]: infer D }, errors?: infer E, status: infer S }>
+      ? (...args: Parameters<T[P]>) => Promise<{ data: D, errors?: E, status: S }>
+      : T[P];
+};
+
+function transformSdk<T extends OriginalSdk>(sdk: T): TransformedSdk<T> {
+  const transformed: any = {};
+
+  Object.keys(sdk).forEach((key) => {
+      const originalFunction = sdk[key];
+      transformed[key] = async (...args: any[]): Promise<any> => {
+          try {
+            const response = await originalFunction(...args);
+            return {
+              data: response.data[key],
+              errors: response.errors,
+              status: response.status
+            };
+          } catch (error: any) {
+              if (error.response?.errors) {
+                return {
+                  data: error.response.data,
+                  errors: error.response.errors,
+                  status: error.response.status
+                };
+              } else throw error
+          }
+      };
+  });
+
+  return transformed as TransformedSdk<T>;
+}
+
+const eyeOfSauron = transformSdk(sdk);
+
+export default eyeOfSauron;

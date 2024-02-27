@@ -1,0 +1,1 @@
+export const WATSON_URL = process.env.WATSON_URL as string;
