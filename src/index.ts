@@ -16,7 +16,7 @@ program
   .option('-f, --folder <folder>', 'Set the destination folder for generated files')
   .option('-j, --javascript', 'Use when generating Javascript files')
   .action((options) => {
-    const folder = options.folder ? options.folder: 'eye-of-sauron'
+    const folder = options.folder ? options.folder: 'eyeofsauron'
     const generateJSFiles = options.javascript
     generate(folder, generateJSFiles);
   });
