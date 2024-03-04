@@ -11,7 +11,7 @@ async function generateCodeFromSchema(folder: string) {
         documents: [`${folder}/gql/*.graphql`],
         generates: {
             [`${folder}/gql/__generated__/index.ts`]: {
-                plugins: ["typescript", "typescript-operations", "typescript-graphql-request"],
+                plugins: ["typescript", "typescript-operations", "./lib/custom-plugin/index.js"],
                 presetConfig: {
                     gqlTagName: 'gql',
                 },

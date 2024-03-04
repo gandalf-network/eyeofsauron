@@ -26,7 +26,7 @@ async function createOrUpdateQueriesAndMutations(folder: string) {
     const queriesAndMutations = await generateOperationsFromSchema(WATSON_URL)
   
     writeFileSync(outputFile, queriesAndMutations)
-    console.log('Qury files updated successfully.');
+    console.log('Query files updated successfully.');
 
     return true
   } catch (error: any) {
