@@ -148,14 +148,14 @@ export class GraphQLRequestVisitor extends ClientSideBaseVisitor<
           }; errors?: GraphQLError[]; extensions?: ${
             this.config.extensionsType
           }; headers: Headers; status: number; }> {
-            const requestBody = {
-                query: ${docVarName},
-                variables: {
-                  ...variables
-                }
-            }
-            requestHeaders = {...requestHeaders, ...this.addSignatureToHeader(requestBody)}
-    return this.withWrapper((wrappedRequestHeaders) => this.client.rawRequest<${
+  const requestBody = {
+    query: ${docVarName},
+    variables: {
+      ...variables
+    }
+  }
+  requestHeaders = {...requestHeaders, ...this.addSignatureToHeader(requestBody)}
+  return this.withWrapper((wrappedRequestHeaders) => this.client.rawRequest<${
       o.operationResultType
     }>(${docArg}, variables, {...requestHeaders, ...wrappedRequestHeaders}), '${operationName}', '${operationType}', variables);
 }`;
@@ -163,13 +163,6 @@ export class GraphQLRequestVisitor extends ClientSideBaseVisitor<
         return `${operationName}(variables${optionalVariables ? '?' : ''}: ${
           o.operationVariablesTypes
         }, requestHeaders?: GraphQLClientRequestHeaders): Promise<${o.operationResultType}> {
-            const requestBody = {
-                query: ${docVarName},
-                variables: {
-                  ...variables
-                }
-            }
-            requestHeaders = {...requestHeaders, ...this.addSignatureToHeader(requestBody)}
   return this.withWrapper((wrappedRequestHeaders) => this.client.request<${
     o.operationResultType
   }>(${docVarName}, variables, {...requestHeaders, ...wrappedRequestHeaders}), '${operationName}', '${operationType}', variables);
@@ -183,39 +176,38 @@ export class GraphQLRequestVisitor extends ClientSideBaseVisitor<
 const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationType, _variables) => action();
 ${extraVariables.join('\n')}
 export default class Eye {
-    private client: GraphQLClient = new GQLClient('${WATSON_URL}');
-    private withWrapper: SdkFunctionWrapper = (action, _operationName, _operationType, _variables) => action();
-    privateKey: KeyObject;
+  private client: GraphQLClient = new GQLClient('${WATSON_URL}');
+  private withWrapper: SdkFunctionWrapper = (action, _operationName, _operationType, _variables) => action();
+  privateKey: KeyObject;
 
-    constructor(privateKey: string) {
-        this.privateKey = Eye.generatePrivateKeyFromHex(privateKey)
-    }
+  constructor(privateKey: string) {
+    this.privateKey = Eye.generatePrivateKeyFromHex(privateKey)
+  }
 
-    ${allPossibleActions.join('\n')}
+  private signRequestBody(privateKey: KeyObject, requestBody: any): string {
+    const hash = createHash('SHA256').update(JSON.stringify(requestBody)).digest('hex');
+    const sign = createSign('SHA256');
+    sign.update(hash);
+    return sign.sign(privateKey, 'base64');
+  }
 
-    private signRequestBody(privateKey: KeyObject, requestBody: any): string {
-        const hash = createHash('SHA256').update(JSON.stringify(requestBody)).digest('hex');
-        const sign = createSign('SHA256');
-        sign.update(hash);
-        return sign.sign(privateKey, 'base64');
-    }
+  private addSignatureToHeader(requestBody: any) {
+    const signature = this.signRequestBody(this.privateKey, requestBody)
+    const headers = new Headers();
+    headers.append('X-Gandalf-Signature', signature);
+    return headers
+  }
 
-    private addSignatureToHeader(requestBody: any) {
-        const signature = this.signRequestBody(this.privateKey, requestBody)
-        const headers = new Headers();
-        headers.append('X-Gandalf-Signature', signature);
-        return headers
-    }
-  
-    private static generatePrivateKeyFromHex(hexPrivateKey: string): KeyObject {
-        const keyBuffer = Buffer.from(hexPrivateKey, 'hex');
-        const privateKey = createPrivateKey({
-            key: keyBuffer,
-            format: 'der',
-            type: 'pkcs8',
-        });
-        return privateKey
-    }
+  private static generatePrivateKeyFromHex(hexPrivateKey: string): KeyObject {
+    const keyBuffer = Buffer.from(hexPrivateKey, 'hex');
+    const privateKey = createPrivateKey({
+      key: keyBuffer,
+      format: 'der',
+      type: 'pkcs8',
+    });
+    return privateKey
+  } \n
+  ${allPossibleActions.join('\n')}
 }`
   }
 }

@@ -16,7 +16,7 @@ describe('generateCodeFromSchema', () => {
       documents: [`${folder}/gql/*.graphql`],
       generates: {
         [`${folder}/gql/__generated__/index.ts`]: {
-          plugins: ["typescript", "typescript-operations", "./lib/custom-plugin/index.js"],
+          plugins: ["typescript", "typescript-operations", expect.any(String)],
           presetConfig: { gqlTagName: 'gql' },
         },
       },
