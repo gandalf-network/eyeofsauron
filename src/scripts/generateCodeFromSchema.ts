@@ -3,7 +3,9 @@ import { WATSON_URL } from '../lib/constants';
 import { join } from 'path';
 
 async function generateCodeFromSchema(folder: string) {
-    const filePath = join(__dirname, '../lib/custom-plugin/index.js');
+    const customPluginFilePath = join(__dirname, '../lib/plugins/custom-plugin/index.js');
+    const typescriptPluginFilePath = join(__dirname, '../lib/plugins/typescript/index.js');
+    const operationsPluginFilePath = join(__dirname, '../lib/plugins/operations/index.js');
     const config: CodegenConfig = {
         schema: [
             {
@@ -13,7 +15,7 @@ async function generateCodeFromSchema(folder: string) {
         documents: [`${folder}/gql/*.graphql`],
         generates: {
             [`${folder}/gql/__generated__/index.ts`]: {
-                plugins: ["typescript", "typescript-operations", filePath],
+                plugins: [typescriptPluginFilePath, operationsPluginFilePath, customPluginFilePath],
                 presetConfig: {
                     gqlTagName: 'gql',
                 },

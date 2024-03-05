@@ -3,7 +3,7 @@ enum GandalfErrorCode {
     InvalidService      = 'PROTOCOL_NOT_SUPPORTED',
     RecordNotFound      = 'RECORD_NOT_FOUND',
     InternalServerError = 'INTERNAL_SERVER_ERROR'
-  }
+}
     
 class GandalfError extends Error {
     code: GandalfErrorCode
@@ -16,31 +16,31 @@ class GandalfError extends Error {
     }
 }
 
-function handleErrors(error: any) {
+function handleErrors(error: any): GandalfError {
     if (error.response?.errors) {
         switch (error.response.errors[0].extensions.code) {
             case "INVALID_SIGNATURE":
-                throw new GandalfError(
+                return new GandalfError(
                     error.response.errors[0].message + ' verify your private key', 
                     GandalfErrorCode.InvalidSignature,
                 ) 
             case "RECORD_NOT_FOUND":
-                throw new GandalfError(
+                return new GandalfError(
                     error.response.errors[0].message, 
                     GandalfErrorCode.RecordNotFound,
                 ) 
             case "PROTOCOL_NOT_SUPPORTED":
-                throw new GandalfError(
+                return new GandalfError(
                     error.response.errors[0].message, 
                     GandalfErrorCode.InvalidService,
                 ) 
             default:
-                throw new GandalfError(
+                return new GandalfError(
                     error.response.errors[0].message, 
                     GandalfErrorCode.InternalServerError,
                 ) 
         }
-    } else throw new GandalfError(
+    } else return new GandalfError(
         error.message, 
         GandalfErrorCode.InternalServerError,
     ) 

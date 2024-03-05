@@ -9,7 +9,7 @@ import {
   LoadedFragment,
 } from '@graphql-codegen/visitor-plugin-common';
 import { RawGraphQLRequestPluginConfig } from './config.js';
-import { WATSON_URL } from '../constants';
+import { WATSON_URL } from '../../constants.js';
 
 export interface GraphQLRequestPluginConfig extends ClientSideBasePluginConfig {
   rawRequest: boolean;
@@ -20,7 +20,7 @@ let additionalExportedTypes = `
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string, variables?: any) => Promise<T>;
 `;
 
-additionalExportedTypes = `
+additionalExportedTypes = additionalExportedTypes + `
   export type EyeInput = {
     privateKey: string;
   };
@@ -174,7 +174,7 @@ export class GraphQLRequestVisitor extends ClientSideBaseVisitor<
       data: data['${operationName}'],
     };
   } catch (error: any) {
-    handleErrors(error)
+    throw handleErrors(error)
   }
 }`;
         }
@@ -197,9 +197,11 @@ export default class Eye {
   private client: GraphQLClient = new GQLClient('${WATSON_URL}');
   private withWrapper: SdkFunctionWrapper = (action, _operationName, _operationType, _variables) => action();
   privateKey: string;
-  publicKey: string;
 
   constructor(input: EyeInput) {
+    if (/^0x/i.test(input.privateKey)) {
+      input.privateKey = input.privateKey.slice(2)
+    }
     this.privateKey = input.privateKey
   }
 
@@ -211,8 +213,11 @@ export default class Eye {
       const signatureDer = signature.toDER();
       const signatureB64 = Buffer.from(signatureDer).toString('base64');
       return signatureB64
-    } catch (err) {
-        throw err
+    } catch (error: any) {
+        throw new GandalfError(
+          error.message + ' verify your private key', 
+          GandalfErrorCode.InvalidSignature,
+        )
     }
   }
 
@@ -228,7 +233,7 @@ export default class Eye {
     try {
       const key = ec.keyFromPrivate(hexPrivateKey, 'hex');
       return key;
-    } catch (error) {
+    } catch (error: any) {
       throw new GandalfError(
         error.message + ' verify your private key', 
         GandalfErrorCode.InvalidSignature,
