@@ -52,12 +52,16 @@ export class GraphQLRequestVisitor extends ClientSideBaseVisitor<
     );
 
     this._additionalImports.push(
-        `import { createSign, createPrivateKey, createHash, KeyObject } from 'crypto';`,
+        `import { createHash } from 'crypto';`,
     );
 
     this._additionalImports.push(
         `import { GraphQLClient as GQLClient } from 'graphql-request';`,
     );
+
+    this._additionalImports.push(
+      `import { ec as EC } from 'elliptic';`,
+  );
 
     if (this.config.rawRequest) {
       if (this.config.documentMode !== DocumentMode.string) {
@@ -141,23 +145,28 @@ export class GraphQLRequestVisitor extends ClientSideBaseVisitor<
             docArg = `${docVarName}String`;
             extraVariables.push(`const ${docArg} = print(${docVarName});`);
           }
-          return `${operationName}(variables${optionalVariables ? '?' : ''}: ${
+          return `async ${operationName}(variables${optionalVariables ? '?' : ''}: ${
             o.operationVariablesTypes
-          }, requestHeaders?: GraphQLClientRequestHeaders): Promise<{ data: ${
-            o.operationResultType
-          }; errors?: GraphQLError[]; extensions?: ${
-            this.config.extensionsType
-          }; headers: Headers; status: number; }> {
+          }, requestHeaders?: GraphQLClientRequestHeaders) {
   const requestBody = {
-    query: ${docVarName},
+    query: ${docVarName}String,
     variables: {
       ...variables
-    }
+    },
+    operationName: '${operationName}'
   }
-  requestHeaders = {...requestHeaders, ...this.addSignatureToHeader(requestBody)}
-  return this.withWrapper((wrappedRequestHeaders) => this.client.rawRequest<${
+  const headers = await this.addSignatureToHeader(requestBody)
+  requestHeaders = {...requestHeaders, ...headers}
+  try {
+    const { data } = await this.withWrapper((wrappedRequestHeaders) => this.client.rawRequest<${
       o.operationResultType
     }>(${docArg}, variables, {...requestHeaders, ...wrappedRequestHeaders}), '${operationName}', '${operationType}', variables);
+    return {
+      data: data['${operationName}'],
+    };
+  } catch (error: any) {
+    throw error
+  }
 }`;
         }
         return `${operationName}(variables${optionalVariables ? '?' : ''}: ${
@@ -173,39 +182,48 @@ export class GraphQLRequestVisitor extends ClientSideBaseVisitor<
 
     return `${additionalExportedTypes}
 
-const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationType, _variables) => action();
 ${extraVariables.join('\n')}
+const ec = new EC('secp256k1');
 export default class Eye {
   private client: GraphQLClient = new GQLClient('${WATSON_URL}');
   private withWrapper: SdkFunctionWrapper = (action, _operationName, _operationType, _variables) => action();
-  privateKey: KeyObject;
+  privateKey: string;
+  publicKey: string;
 
-  constructor(privateKey: string) {
-    this.privateKey = Eye.generatePrivateKeyFromHex(privateKey)
+  constructor(publicKey: string, privateKey: string) {
+    this.publicKey = publicKey
+    this.privateKey = privateKey
   }
 
-  private signRequestBody(privateKey: KeyObject, requestBody: any): string {
-    const hash = createHash('SHA256').update(JSON.stringify(requestBody)).digest('hex');
-    const sign = createSign('SHA256');
-    sign.update(hash);
-    return sign.sign(privateKey, 'base64');
+  private async signRequestBody(requestBody: any): Promise<string> {
+    const privateKey = Eye.generatePrivateKeyFromHex(this.privateKey)
+    try {
+      const hash = createHash('sha256').update(JSON.stringify(requestBody)).digest();
+      const signature = privateKey.sign(hash);
+      const signatureDer = signature.toDER();
+      const signatureB64 = Buffer.from(signatureDer).toString('base64');
+      return signatureB64
+    } catch (err) {
+        throw err
+    }
   }
 
-  private addSignatureToHeader(requestBody: any) {
-    const signature = this.signRequestBody(this.privateKey, requestBody)
-    const headers = new Headers();
-    headers.append('X-Gandalf-Signature', signature);
-    return headers
+  private async addSignatureToHeader(requestBody: any) {
+    const signature = await this.signRequestBody(requestBody);
+    const headers: GraphQLClientRequestHeaders = {
+        'X-Gandalf-Public-Key': this.publicKey,
+        'X-Gandalf-Signature': signature,
+    };
+    return headers;
   }
 
-  private static generatePrivateKeyFromHex(hexPrivateKey: string): KeyObject {
-    const keyBuffer = Buffer.from(hexPrivateKey, 'hex');
-    const privateKey = createPrivateKey({
-      key: keyBuffer,
-      format: 'der',
-      type: 'pkcs8',
-    });
-    return privateKey
+  private static generatePrivateKeyFromHex(hexPrivateKey: string): EC.KeyPair {
+    try {
+      const key = ec.keyFromPrivate(hexPrivateKey, 'hex');
+      return key;
+    } catch (error) {
+      throw error;
+    }
   } \n
   ${allPossibleActions.join('\n')}
 }`
