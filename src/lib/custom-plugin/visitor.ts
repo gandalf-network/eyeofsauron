@@ -61,7 +61,11 @@ export class GraphQLRequestVisitor extends ClientSideBaseVisitor<
 
     this._additionalImports.push(
       `import { ec as EC } from 'elliptic';`,
-  );
+    );
+
+    this._additionalImports.push(
+      `import { GandalfErrorCode, GandalfError, handleErrors } from '../../errors';`,
+    );
 
     if (this.config.rawRequest) {
       if (this.config.documentMode !== DocumentMode.string) {
@@ -165,7 +169,7 @@ export class GraphQLRequestVisitor extends ClientSideBaseVisitor<
       data: data['${operationName}'],
     };
   } catch (error: any) {
-    throw error
+    handleErrors(error)
   }
 }`;
         }
@@ -222,7 +226,10 @@ export default class Eye {
       const key = ec.keyFromPrivate(hexPrivateKey, 'hex');
       return key;
     } catch (error) {
-      throw error;
+      throw new GandalfError(
+        error.message + ' verify your private key', 
+        GandalfErrorCode.InvalidSignature,
+      )
     }
   } \n
   ${allPossibleActions.join('\n')}

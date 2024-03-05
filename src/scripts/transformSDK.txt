@@ -1,5 +1,0 @@
-import Eye, { Source } from "./gql/__generated__";
-
-export { Source };
-
-export default Eye;

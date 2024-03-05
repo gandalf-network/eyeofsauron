@@ -1,12 +1,12 @@
 import generate from "../generate";
 import createOrUpdateQueriesAndMutations from "../createOrUpdateQueriesAndMutations";
 import generateCodeFromSchema from "../generateCodeFromSchema";
-import generateIndexFile from "../generateIndexFile";
+import generateFiles from "../generateFiles";
 import transpileToJs from "../transpileToJs";
 
 jest.mock("../createOrUpdateQueriesAndMutations");
 jest.mock("../generateCodeFromSchema");
-jest.mock("../generateIndexFile");
+jest.mock("../generateFiles");
 jest.mock("../transpileToJs");
 
 describe("generate", () => {
@@ -20,13 +20,13 @@ describe("generate", () => {
 
     (createOrUpdateQueriesAndMutations as jest.Mock).mockResolvedValueOnce(true);
     (generateCodeFromSchema as jest.Mock).mockResolvedValueOnce(true);
-    (generateIndexFile as jest.Mock).mockResolvedValueOnce(true);
+    (generateFiles as jest.Mock).mockResolvedValueOnce(true);
 
     await generate(folder, generateJSFiles);
 
     expect(createOrUpdateQueriesAndMutations).toHaveBeenCalledWith(folder);
     expect(generateCodeFromSchema).toHaveBeenCalledWith(folder);
-    expect(generateIndexFile).toHaveBeenCalledWith(folder);
+    expect(generateFiles).toHaveBeenCalledWith(folder);
     expect(transpileToJs).toHaveBeenCalledWith(folder);
   });
 
@@ -55,7 +55,7 @@ describe("generate", () => {
 
     (createOrUpdateQueriesAndMutations as jest.Mock).mockResolvedValueOnce(true);
     (generateCodeFromSchema as jest.Mock).mockResolvedValueOnce(true);
-    (generateIndexFile as jest.Mock).mockResolvedValueOnce(false);
+    (generateFiles as jest.Mock).mockResolvedValueOnce(false);
 
     await expect(generate(folder, generateJSFiles)).rejects.toThrowError("Could not index file");
   });
@@ -66,7 +66,7 @@ describe("generate", () => {
 
     (createOrUpdateQueriesAndMutations as jest.Mock).mockResolvedValueOnce(true);
     (generateCodeFromSchema as jest.Mock).mockResolvedValueOnce(true);
-    (generateIndexFile as jest.Mock).mockResolvedValueOnce(true);
+    (generateFiles as jest.Mock).mockResolvedValueOnce(true);
 
     await generate(folder, generateJSFiles);
 

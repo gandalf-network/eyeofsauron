@@ -1,6 +1,6 @@
 import generateCodeFromSchema from "./generateCodeFromSchema";
 import createOrUpdateQueriesAndMutations from "./createOrUpdateQueriesAndMutations";
-import generateIndexFile from "./generateIndexFile";
+import generateFiles from "./generateFiles";
 import transpileToJs from "./transpileToJs";
 
 async function generate(folder: string, generateJSFiles: boolean) {
@@ -14,7 +14,7 @@ async function generate(folder: string, generateJSFiles: boolean) {
         throw new Error("Could not generate code from schema")
     }
 
-    const indexFileGenerated = await generateIndexFile(folder)
+    const indexFileGenerated = await generateFiles(folder)
     if (!indexFileGenerated) {
         throw new Error("Could not index file")
     }
