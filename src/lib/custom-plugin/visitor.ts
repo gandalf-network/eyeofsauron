@@ -16,10 +16,15 @@ export interface GraphQLRequestPluginConfig extends ClientSideBasePluginConfig {
   extensionsType: string;
 }
 
-const additionalExportedTypes = `
+let additionalExportedTypes = `
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string, variables?: any) => Promise<T>;
 `;
 
+additionalExportedTypes = `
+  export type EyeInput = {
+    privateKey: string;
+  };
+`
 export class GraphQLRequestVisitor extends ClientSideBaseVisitor<
   RawGraphQLRequestPluginConfig,
   GraphQLRequestPluginConfig
@@ -194,9 +199,8 @@ export default class Eye {
   privateKey: string;
   publicKey: string;
 
-  constructor(publicKey: string, privateKey: string) {
-    this.publicKey = publicKey
-    this.privateKey = privateKey
+  constructor(input: EyeInput) {
+    this.privateKey = input.privateKey
   }
 
   private async signRequestBody(requestBody: any): Promise<string> {
@@ -215,7 +219,6 @@ export default class Eye {
   private async addSignatureToHeader(requestBody: any) {
     const signature = await this.signRequestBody(requestBody);
     const headers: GraphQLClientRequestHeaders = {
-        'X-Gandalf-Public-Key': this.publicKey,
         'X-Gandalf-Signature': signature,
     };
     return headers;
