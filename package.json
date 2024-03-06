@@ -10,7 +10,7 @@
     "dist/**/*"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npx jest",
     "prebuild": "node prebuild-script.ts",
     "build": "tsc && copyfiles -u 1 src/**/*.txt dist/"
   },
@@ -19,20 +19,16 @@
   "license": "ISC",
   "dependencies": {
     "@graphql-codegen/cli": "^5.0.2",
-    "@graphql-codegen/typescript-graphql-request": "^6.2.0",
-    "@graphql-codegen/typescript-operations": "^4.2.0",
     "axios": "^1.6.7",
     "commander": "^12.0.0",
-    "dts-gen": "^0.10.0",
     "rimraf": "^5.0.5",
     "typescript": "^5.3.3"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.12",
     "copyfiles": "^2.4.1",
     "dotenv": "^16.4.5",
-    "dotenv-cli": "^7.3.0"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@tosinjs"
-  }
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2"
+    }
 }

@@ -19,18 +19,20 @@ async function createOrUpdateQueriesAndMutations(folder: string) {
   try {
     createEyeOfSauronFolder(folder, subfolder)
   } catch (error) {
+    console.log(error, "11111111111")
     return false
   }
 
   try {
     const queriesAndMutations = await generateOperationsFromSchema(WATSON_URL)
+    console.log(WATSON_URL, "fiji111")
   
     writeFileSync(outputFile, queriesAndMutations)
-    console.log('Qury files updated successfully.');
+    console.log('Query files updated successfully.');
 
     return true
   } catch (error: any) {
-    console.error('Error updating query files:', error.message);
+    console.error('Error updating query files:', error.message, "qkpw");
     return false
   }
 }
