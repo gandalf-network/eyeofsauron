@@ -1,1 +1,107 @@
-# eye-of-sauron
+# eyeofsauron
+
+eyeofsauron is a command-line tool designed to generate the necessary files that makes it super easy to interact with the Sauron API. It completely abstracts away the complexity of authentication and interacting with the GraphQL APIs.
+
+## Features
+
+- Generate necessary files required for interacting with the Sauron API
+- Automatically install required dependencies
+
+## Installation
+
+### Prerequisites
+
+- NodeJS
+
+### Installing eyeofsauron
+
+```bash
+
+npm install -g @gandalfpage/eyeofsauron
+
+```
+
+### Usage
+
+```bash
+
+eyeofsauron generate
+
+```
+
+### Flags
+
+- -f, --file [filename]: Specify the filename of the file to be generated
+- -j, --javascript : Specify if the generated files should be compiled to Javascript.
+
+### Examples
+
+Generate the eyeofsauron files in typescript in the default eyeofsauron folder
+
+```bash
+eyeofsauron generate
+```
+
+Generate the eyeofsauron files in javascript in a folder called sauron_files
+
+```bash
+eyeofsauron generate -f sauron_files -j
+```
+
+## Using the Generated Files
+
+Once you have successfully generated the necessary files and installed the required dependencies using eyeofsauron, you can proceed to use these files to interact with the API.
+
+### Initialization
+
+```typescript
+// index.ts
+
+// Change eyeofsauron to whatever name you specified for the file generation
+import Eye, { Source } from './eyeofsauron';
+
+const privateKey = process.env.PRIVATE_KEY
+const eye = new Eye({ privateKey })
+```
+
+### Get Activity
+
+```typescript
+// index.ts
+
+async function getActivity() {
+    try {
+        const { data } = await eye.getActivity({
+            dataKey: "MY_DATA_KEY",
+            source: Source.Netflix,
+            limit: 10,
+            page: 1,
+        })
+        console.log(data)
+    } catch (error: any) {
+        console.log(error)
+    }
+}
+```
+
+### Lookup Activity
+
+```typescript
+// index.ts
+
+async function getActivity() {
+    try {
+        const { data } = await eye.lookupActivity({
+            dataKey: "MY_DATA_KEY",
+            activityId: "ACTIVITY_ID",
+        })
+        console.log(data)
+    } catch (error: any) {
+        console.log(error)
+    }
+}
+```
+
+### Contributing
+
+Contributions are welcome, whether they're feature requests, bug fixes, or documentation improvements.
