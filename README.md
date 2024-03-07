@@ -11,17 +11,17 @@ eyeofsauron is a command-line tool designed to generate the necessary files that
 
 ### Prerequisites
 
-- NodeJS
+- [NodeJS](https://nodejs.org/) - version 16.x or higher
 
 ### Installing eyeofsauron
 
 ```bash
 
-npm install -g @gandalfpage/eyeofsauron
+npm install -g @gandalf-network/eyeofsauron
 
 ```
 
-### Usage
+## Usage
 
 ```bash
 
@@ -34,25 +34,11 @@ eyeofsauron generate
 - -f, --file [filename]: Specify the filename of the file to be generated
 - -j, --javascript : Specify if the generated files should be compiled to Javascript.
 
-### Examples
-
-Generate the eyeofsauron files in typescript in the default eyeofsauron folder
-
-```bash
-eyeofsauron generate
-```
-
-Generate the eyeofsauron files in javascript in a folder called sauron_files
-
-```bash
-eyeofsauron generate -f sauron_files -j
-```
-
-## Using the Generated Files
+### Using the Generated Files
 
 Once you have successfully generated the necessary files and installed the required dependencies using eyeofsauron, you can proceed to use these files to interact with the API.
 
-### Initialization
+#### Initialization
 
 ```typescript
 // index.ts
@@ -64,7 +50,7 @@ const privateKey = process.env.PRIVATE_KEY
 const eye = new Eye({ privateKey })
 ```
 
-### Get Activity
+#### Get Activity
 
 ```typescript
 // index.ts
@@ -84,7 +70,7 @@ async function getActivity() {
 }
 ```
 
-### Lookup Activity
+#### Lookup Activity
 
 ```typescript
 // index.ts
@@ -102,6 +88,6 @@ async function getActivity() {
 }
 ```
 
-### Contributing
+## Contributing
 
 Contributions are welcome, whether they're feature requests, bug fixes, or documentation improvements.
