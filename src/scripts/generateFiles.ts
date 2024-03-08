@@ -4,11 +4,11 @@ import { join } from 'path';
 async function generateFiles(folder: string) {
   const filesToBeGenerated = [
     {
-      filename: 'errors.txt',
+      filename: './templates/errors.txt',
       location: 'errors.ts',
     },
     {
-      filename: 'index.txt',
+      filename: './templates/index.txt',
       location: 'index.ts',
     },
   ]

@@ -1,5 +1,5 @@
 {
-  "name": "@gandalfpage/eye-of-sauron",
+  "name": "@gandalf-network/eyeofsauron",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -15,8 +15,12 @@
     "build": "tsc && copyfiles -u 1 src/**/*.txt dist/"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "gandalf-network",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gandalf-network/eyeofsauron.git"
+  },
   "dependencies": {
     "@graphql-codegen/cli": "^5.0.2",
     "axios": "^1.6.7",

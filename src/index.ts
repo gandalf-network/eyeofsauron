@@ -16,12 +16,12 @@ program
   .command('generate')
   .alias('g')
   .description('Generate the prebuilt funtions')
-  .option('-f, --folder <folder>', 'Set the destination folder for generated files')
+  .option('-f, --file <file>', 'Set the destination file for generated files')
   .option('-j, --javascript', 'Use when generating Javascript files')
   .action(async (options) => {
-    const folder = options.folder ? options.folder: 'eyeofsauron'
+    const file = options.file ? options.file: 'eyeofsauron'
     const generateJSFiles = options.javascript
-    await generate(folder, generateJSFiles);
+    await generate(file, generateJSFiles);
 
     const packageManager = getPkgManager()
 
