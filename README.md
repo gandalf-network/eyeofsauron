@@ -74,14 +74,7 @@ async function getActivity() {
             if (activityMetadata?.__typename === "NetflixActivityMetadata") {
                 console.log(activityMetadata.title)
                 console.log(activityMetadata.date)
-    
-                const activityMetadataSubject = activityMetadata.subject
-                if (activityMetadataSubject) {
-                    for (const subject of activityMetadataSubject) {
-                        console.log(subject?.type)
-                        console.log(subject?.value)
-                    }
-                }
+                console.log(activityMetadata.subject)
             }
         }
 
@@ -108,6 +101,7 @@ async function lookupActivity() {
         if (activity.metadata.__typename === "NetflixActivityMetadata") {
             console.log(activity.metadata.date)
             console.log(activity.metadata.title)
+            console.log(activity.metadata.subject)
         }
     } catch (error: any) {
         console.log(error)
