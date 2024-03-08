@@ -63,7 +63,28 @@ async function getActivity() {
             limit: 10,
             page: 1,
         })
-        console.log(data)
+
+        const activities = data.data
+
+        for (const activity of activities) {
+            console.log(activity?.id)
+
+            const activityMetadata = activity?.metadata
+
+            if (activityMetadata?.__typename === "NetflixActivityMetadata") {
+                console.log(activityMetadata.title)
+                console.log(activityMetadata.date)
+    
+                const activityMetadataSubject = activityMetadata.subject
+                if (activityMetadataSubject) {
+                    for (const subject of activityMetadataSubject) {
+                        console.log(subject?.type)
+                        console.log(subject?.value)
+                    }
+                }
+            }
+        }
+
     } catch (error: any) {
         console.log(error)
     }
@@ -75,13 +96,19 @@ async function getActivity() {
 ```typescript
 // index.ts
 
-async function getActivity() {
+async function lookupActivity() {
     try {
-        const { data } = await eye.lookupActivity({
+        const { data: activity } = await eye.lookupActivity({
             dataKey: "MY_DATA_KEY",
             activityId: "ACTIVITY_ID",
         })
-        console.log(data)
+
+        console.log(activity.id)
+
+        if (activity.metadata.__typename === "NetflixActivityMetadata") {
+            console.log(activity.metadata.date)
+            console.log(activity.metadata.title)
+        }
     } catch (error: any) {
         console.log(error)
     }
