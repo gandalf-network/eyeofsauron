@@ -3,20 +3,33 @@ import { cyan } from 'picocolors'
 import { exec } from 'child_process';
 import type { PackageManager } from './get-pkg-manager'
 
-const dependencies = ['graphql', 'graphql-tag', 'graphql-request', 'elliptic'];
-const devDependencies = ['@types/elliptic'];
+const dependencies = {
+  "elliptic": "^6.5.5",
+  "graphql": "^16.8.1",
+  "graphql-request": "^6.1.0",
+  "graphql-tag": "^2.12.6",
+}
+
+const devDependencies = {
+  "@types/elliptic": "^6.4.18",
+}
 
 export function installDependencies(packageManager: PackageManager) {
     console.log("\nInstalling dependencies:");
-    for (const dependency of dependencies)
-        console.log(`- ${cyan(dependency)}`);
+    let depsInstallCmd = "";
+    for (const dependency of Object.keys(dependencies)) {
+      const installCmd = `${dependency}@${dependencies[dependency as keyof typeof dependencies]}`
+      depsInstallCmd = `${depsInstallCmd} ${installCmd}`
+      console.log(`- ${cyan(dependency)}`);
+    }
   
     console.log("\nInstalling devDependencies:");
-    for (const dependency of devDependencies)
-        console.log(`- ${cyan(dependency)}`);
-
-    const depsInstallCmd = dependencies.join(' ');
-    const devDepsInstallCmd = devDependencies.join(' ');
+    let devDepsInstallCmd = "";
+    for (const dependency of Object.keys(devDependencies)) {
+      const installCmd = `${dependency}@${devDependencies[dependency as keyof typeof devDependencies]}`
+      devDepsInstallCmd = `${devDepsInstallCmd} ${installCmd}`
+      console.log(`- ${cyan(dependency)}`);
+    }
 
     let installCmd = `npm install ${depsInstallCmd} && npm install -D ${devDepsInstallCmd}`;
   

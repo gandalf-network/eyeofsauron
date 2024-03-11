@@ -16,11 +16,14 @@ async function generate(folder: string, generateJSFiles: boolean) {
 
     const indexFileGenerated = await generateFiles(folder)
     if (!indexFileGenerated) {
-        throw new Error("Could not index file")
+        throw new Error("Could not generate files")
     }
 
     if (generateJSFiles) {
-        transpileToJs(folder)
+        const transpiledToJS = await transpileToJs(folder)
+        if (!transpiledToJS) {
+            throw new Error("Could not transpile files to JS")
+        }
     }
 }
 
