@@ -11,11 +11,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
       - run: npm ci
       - run: npm test
-        env: 
-          WATSON_URL: ${{ secrets.WATSON_URL }}
 
   publish-npm:
     needs: build
@@ -24,10 +22,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
           registry-url: https://registry.npmjs.org
       - run: npm ci
       - run: npm run build
+        env:
+          WATSON_URL: ${{ secrets.WATSON_URL }}
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
