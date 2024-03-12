@@ -55,6 +55,23 @@ jobs:
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org
+      - run: |
+          if [ -z "${NODE_AUTH_TOKEN}" ]; then
+            echo "NODE_AUTH_TOKEN is not set."
+            exit 1
+          else
+            echo "NODE_AUTH_TOKEN is set."
+          fi
+          
+          if [ -z "${WATSON_URL}" ]; then
+            echo "WATSON_URL is not set."
+            exit 1
+          else
+            echo "WATSON_URL is set."
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          WATSON_URL: ${{ secrets.WATSON_URL }}
       - run: npm ci
       - run: npm run build
         env:
