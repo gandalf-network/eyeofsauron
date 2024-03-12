@@ -1,39 +1,46 @@
-import * as ts from 'typescript';
-import * as fs from 'fs';
-import * as path from 'path';
+import { exec as execCallback } from 'child_process';
+import { readdirSync, statSync, unlinkSync } from 'fs';
+import { extname, join } from 'path';
+import { promisify } from 'util';
 
-function transpileToJS(dir: string): void {
-    const compilerOptions: ts.CompilerOptions = {
-        target: ts.ScriptTarget.ES5,
-        module: ts.ModuleKind.CommonJS,
-        outDir: dir,
-        declaration: true,
-        declarationDir: dir,
-    };
-    const fileNames = getFilesRecursive(dir)
-        .filter(fileName => fileName.endsWith('.ts'));
+const exec = promisify(execCallback);
 
-    const program = ts.createProgram(fileNames, compilerOptions);
-    const emitResult = program.emit();
+async function transpileToJS(dir: string) {
+    const compileCommand = `npx babel ${dir} --out-dir ${dir} --presets=@babel/preset-typescript --extensions ".ts,.tsx" --source-maps`;
+    try {
+        const { stdout, stderr } = await exec(compileCommand);
+        console.log(stdout);
+        if (stderr !== "") {
+          console.error('stderr:', stderr);
+          return false
+        }
 
-    if (emitResult.emitSkipped) {
-        console.error('Compilation failed');
-    } else {
-        console.log('Compilation successful');
+        return deleteTSFiles(dir)
+    } catch (error) {
+        console.error('Error during compilation:', error);
+        return false
     }
 }
 
-function getFilesRecursive(dir: string): string[] {
-    const files: string[] = [];
-    fs.readdirSync(dir).forEach(file => {
-        const filePath = path.join(dir, file);
-        if (fs.statSync(filePath).isDirectory()) {
-            files.push(...getFilesRecursive(filePath));
-        } else {
-            files.push(filePath);
+function deleteTSFiles(dir: string) {
+    try {
+        const files = readdirSync(dir);
+
+        for (const file of files) {
+            const filePath = join(dir, file);
+            const stat = statSync(filePath);
+
+            if (stat.isDirectory()) {
+                deleteTSFiles(filePath);
+            } else if (extname(file) === '.ts') {
+                unlinkSync(filePath);
+            }
         }
-    });
-    return files;
+        return true
+    } catch (error) {
+        console.log(error)
+        return false
+    }
 }
 
 export default transpileToJS;

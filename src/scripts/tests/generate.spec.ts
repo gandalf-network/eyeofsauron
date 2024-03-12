@@ -21,6 +21,7 @@ describe("generate", () => {
     (createOrUpdateQueriesAndMutations as jest.Mock).mockResolvedValueOnce(true);
     (generateCodeFromSchema as jest.Mock).mockResolvedValueOnce(true);
     (generateFiles as jest.Mock).mockResolvedValueOnce(true);
+    (transpileToJs as jest.Mock).mockResolvedValueOnce(true);
 
     await generate(folder, generateJSFiles);
 
@@ -57,7 +58,7 @@ describe("generate", () => {
     (generateCodeFromSchema as jest.Mock).mockResolvedValueOnce(true);
     (generateFiles as jest.Mock).mockResolvedValueOnce(false);
 
-    await expect(generate(folder, generateJSFiles)).rejects.toThrowError("Could not index file");
+    await expect(generate(folder, generateJSFiles)).rejects.toThrowError("Could not generate files");
   });
 
   it("should not transpile to JS if generateJSFiles is false", async () => {
