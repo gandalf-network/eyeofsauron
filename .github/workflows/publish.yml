@@ -46,7 +46,7 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          FAKE_URL: ${{ secrets.FAKE_URL }}
+          WATSON_URL: ${{ secrets.WATSON_URL }}
       - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
