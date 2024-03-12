@@ -31,3 +31,12 @@ jobs:
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: |
+          if [ -z "${WATSON_URL}" ]; then
+            echo "WATSON_URL is not set."
+            exit 1
+          else
+            echo "WATSON_URL is set."
+          fi
+        env:
+          WATSON_URL: ${{ secrets.WATSON_URL }}
