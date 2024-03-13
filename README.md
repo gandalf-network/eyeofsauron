@@ -31,7 +31,8 @@ eyeofsauron generate
 
 ### Flags
 
-- -f, --file [filename]: Specify the filename of the file to be generated
+- -f, --folder [folder]: Set the destination folder for the generated files
+
 - -j, --javascript : Specify if the generated files should be compiled to Javascript.
 
 ### Using the Generated Files
