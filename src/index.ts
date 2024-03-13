@@ -16,7 +16,7 @@ program
   .command('generate')
   .alias('g')
   .description('Generate the prebuilt funtions')
-  .option('-f, --folder <folder>', 'Set the destination folder for generated files')
+  .option('-f, --folder <folder>', 'Set the destination folder for the generated files')
   .option('-j, --javascript', 'Use when generating Javascript files')
   .action(async (options) => {
     const file = options.file ? options.file: 'eyeofsauron'
