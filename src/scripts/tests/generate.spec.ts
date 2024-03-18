@@ -3,11 +3,13 @@ import createOrUpdateQueriesAndMutations from "../createOrUpdateQueriesAndMutati
 import generateCodeFromSchema from "../generateCodeFromSchema";
 import generateFiles from "../generateFiles";
 import transpileToJs from "../transpileToJs";
+import { installDependencies } from "../../helpers/install-dependencies";
 
 jest.mock("../createOrUpdateQueriesAndMutations");
 jest.mock("../generateCodeFromSchema");
 jest.mock("../generateFiles");
 jest.mock("../transpileToJs");
+jest.mock("../../helpers/install-dependencies");
 
 describe("generate", () => {
   afterEach(() => {
@@ -22,12 +24,14 @@ describe("generate", () => {
     (generateCodeFromSchema as jest.Mock).mockResolvedValueOnce(true);
     (generateFiles as jest.Mock).mockResolvedValueOnce(true);
     (transpileToJs as jest.Mock).mockResolvedValueOnce(true);
+    (installDependencies as jest.Mock).mockResolvedValueOnce({success: true, message: "Deps Installed"})
 
     await generate(folder, generateJSFiles);
 
     expect(createOrUpdateQueriesAndMutations).toHaveBeenCalledWith(folder);
     expect(generateCodeFromSchema).toHaveBeenCalledWith(folder);
     expect(generateFiles).toHaveBeenCalledWith(folder);
+    expect(installDependencies).toHaveBeenCalled();
     expect(transpileToJs).toHaveBeenCalledWith(folder);
   });
 
@@ -68,6 +72,7 @@ describe("generate", () => {
     (createOrUpdateQueriesAndMutations as jest.Mock).mockResolvedValueOnce(true);
     (generateCodeFromSchema as jest.Mock).mockResolvedValueOnce(true);
     (generateFiles as jest.Mock).mockResolvedValueOnce(true);
+    (installDependencies as jest.Mock).mockResolvedValueOnce({success: true, message: "Deps Installed"})
 
     await generate(folder, generateJSFiles);
 

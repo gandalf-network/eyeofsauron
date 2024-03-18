@@ -2,6 +2,8 @@ import generateCodeFromSchema from "./generateCodeFromSchema";
 import createOrUpdateQueriesAndMutations from "./createOrUpdateQueriesAndMutations";
 import generateFiles from "./generateFiles";
 import transpileToJs from "./transpileToJs";
+import { getPkgManager } from "../helpers/get-pkg-manager";
+import { installDependencies } from "../helpers/install-dependencies";
 
 async function generate(folder: string, generateJSFiles: boolean) {
     const mutationAndQueriesUpdated = await createOrUpdateQueriesAndMutations(folder)
@@ -19,12 +21,20 @@ async function generate(folder: string, generateJSFiles: boolean) {
         throw new Error("Could not generate files")
     }
 
-    if (generateJSFiles) {
-        const transpiledToJS = await transpileToJs(folder)
-        if (!transpiledToJS) {
-            throw new Error("Could not transpile files to JS")
-        }
+    const packageManager = getPkgManager()
+
+    const depsInstalled = await installDependencies(packageManager, generateJSFiles)
+    if (!depsInstalled.success) {
+      console.log(depsInstalled.message)
+      throw new Error("Unable to install dependencies")
     }
+
+    if (generateJSFiles) {
+      await transpileToJs(folder)
+    }
+
+    console.log(depsInstalled.message)
+    console.log("Setup Complete")
 }
 
 export default generate

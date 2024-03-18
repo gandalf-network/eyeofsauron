@@ -1,7 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { cyan } from 'picocolors'
-import { exec } from 'child_process';
-import type { PackageManager } from './get-pkg-manager'
+import { promisify } from 'util';
+import { exec as execCallback } from 'child_process';
+import type { PackageManager } from './get-pkg-manager';
+
+const exec = promisify(execCallback);
 
 const dependencies = {
   "elliptic": "^6.5.5",
@@ -10,11 +13,11 @@ const dependencies = {
   "graphql-tag": "^2.12.6",
 }
 
-const devDependencies = {
+let devDependencies: {} = {
   "@types/elliptic": "^6.4.18",
 }
 
-export function installDependencies(packageManager: PackageManager) {
+export async function installDependencies(packageManager: PackageManager, generateJSFiles: boolean) {
     console.log("\nInstalling dependencies:");
     let depsInstallCmd = "";
     for (const dependency of Object.keys(dependencies)) {
@@ -22,7 +25,14 @@ export function installDependencies(packageManager: PackageManager) {
       depsInstallCmd = `${depsInstallCmd} ${installCmd}`
       console.log(`- ${cyan(dependency)}`);
     }
-  
+    
+    if (generateJSFiles) {
+      devDependencies = {
+        ...devDependencies,
+          "@babel/preset-env": "^7.24.0",
+          "@babel/preset-typescript": "^7.23.3",
+      }
+    }
     console.log("\nInstalling devDependencies:");
     let devDepsInstallCmd = "";
     for (const dependency of Object.keys(devDependencies)) {
@@ -43,15 +53,12 @@ export function installDependencies(packageManager: PackageManager) {
         case 'bun':
           installCmd = `bun add ${depsInstallCmd} ${devDepsInstallCmd}`;
           break;
-      }
+    }
   
-    exec(installCmd, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        return;
-      }
-      console.log(stdout);
-      console.error(stderr);
-      console.log('Project setup complete.');
-    });
+    const { stdout, stderr } = await exec(installCmd);
+    if (stderr !== "") {
+      return {success: false, message: stderr}
+    }
+    return {success: true, message: stdout}
   }
+  
