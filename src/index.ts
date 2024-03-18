@@ -2,8 +2,6 @@
 
 import { Command } from 'commander';
 import generate from './scripts/generate';
-import { getPkgManager } from './helpers/get-pkg-manager'
-import { installDependencies } from './helpers/install-dependencies';
 
 const program = new Command();
 
@@ -19,13 +17,9 @@ program
   .option('-f, --folder <folder>', 'Set the destination folder for the generated files')
   .option('-j, --javascript', 'Use when generating Javascript files')
   .action(async (options) => {
-    const file = options.file ? options.file: 'eyeofsauron'
+    const folder = options.folder ? options.folder: 'eyeofsauron'
     const generateJSFiles = options.javascript
-    await generate(file, generateJSFiles);
-
-    const packageManager = getPkgManager()
-
-    await installDependencies(packageManager)
+    await generate(folder, generateJSFiles);
   });
 
   program.parse(process.argv);
