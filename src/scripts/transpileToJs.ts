@@ -1,46 +1,38 @@
-import { exec as execCallback } from 'child_process';
-import { readdirSync, statSync, unlinkSync } from 'fs';
-import { extname, join } from 'path';
-import { promisify } from 'util';
+import * as babel from "@babel/core";
+import * as fs from "fs";
+import * as path from "path";
 
-const exec = promisify(execCallback);
+async function transpileToJS(dir: string): Promise<void> {
+  const files = fs.readdirSync(dir);
 
-async function transpileToJS(dir: string) {
-    const compileCommand = `npx babel ${dir} --out-dir ${dir} --presets=@babel/preset-typescript --extensions ".ts,.tsx" --source-maps`;
-    try {
-        const { stdout, stderr } = await exec(compileCommand);
-        console.log(stdout);
-        if (stderr !== "") {
-          console.error('stderr:', stderr);
-          return false
+  for (const file of files) {
+    const fullPath = path.join(dir, file);
+    const stats = fs.statSync(fullPath);
+    if (stats.isDirectory()) {
+      await transpileToJS(fullPath);
+    } else if (/\.(ts|tsx)$/.test(file)) {
+      const content = fs.readFileSync(fullPath, 'utf8');
+      const output = await babel.transformAsync(content, {
+        presets: [
+          ["@babel/preset-env", { modules: "commonjs" }],
+          "@babel/preset-typescript",
+        ],
+        sourceMaps: true,
+        filename: fullPath,
+      });
+
+      if (output) {
+        const outputFilePath = fullPath.replace(/\.(ts|tsx)$/, '.js');
+        fs.writeFileSync(outputFilePath, output.code as string);
+        if (output.map) {
+          const mapFilePath = `${outputFilePath}.map`;
+          fs.writeFileSync(mapFilePath, JSON.stringify(output.map));
         }
 
-        return deleteTSFiles(dir)
-    } catch (error) {
-        console.error('Error during compilation:', error);
-        return false
+        fs.unlinkSync(fullPath)
+      }
     }
-}
-
-function deleteTSFiles(dir: string) {
-    try {
-        const files = readdirSync(dir);
-
-        for (const file of files) {
-            const filePath = join(dir, file);
-            const stat = statSync(filePath);
-
-            if (stat.isDirectory()) {
-                deleteTSFiles(filePath);
-            } else if (extname(file) === '.ts') {
-                unlinkSync(filePath);
-            }
-        }
-        return true
-    } catch (error) {
-        console.log(error)
-        return false
-    }
+  }
 }
 
 export default transpileToJS;
