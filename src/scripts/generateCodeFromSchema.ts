@@ -24,6 +24,7 @@ async function generateCodeFromSchema(folder: string) {
         config: {
             rawRequest: true,
             useTypeImports: true,
+            addTypeName: true
         },
         ignoreNoDocuments: true,
     };
