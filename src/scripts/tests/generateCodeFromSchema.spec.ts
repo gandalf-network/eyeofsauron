@@ -20,7 +20,7 @@ describe('generateCodeFromSchema', () => {
           presetConfig: { gqlTagName: 'gql' },
         },
       },
-      config: { rawRequest: true, useTypeImports: true },
+      config: { rawRequest: true, useTypeImports: true, addTypeName: true },
       ignoreNoDocuments: true,
     };
 
