@@ -17,7 +17,7 @@ class GandalfError extends Error {
 }
 
 function handleErrors(error: any): GandalfError {
-    if (error.response?.errors[0].extensions.code) {
+    if (error?.response?.errors?.[0]?.extensions?.code) {
         switch (error.response.errors[0].extensions.code) {
             case "INVALID_SIGNATURE":
                 return new GandalfError(
