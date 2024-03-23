@@ -57,7 +57,7 @@ export async function installDependencies(packageManager: PackageManager, genera
   
     const { stdout, stderr } = await exec(installCmd);
     if (stderr !== "") {
-      return {success: false, message: stderr}
+      return {success: true, message: stderr}
     }
     return {success: true, message: stdout}
   }

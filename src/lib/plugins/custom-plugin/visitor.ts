@@ -74,7 +74,7 @@ export class GraphQLRequestVisitor extends ClientSideBaseVisitor<
 
     if (this.config.rawRequest) {
       if (this.config.documentMode !== DocumentMode.string) {
-        this._additionalImports.push(`import { GraphQLError, print } from 'graphql'`);
+        this._additionalImports.push(`import { print } from 'graphql'`);
       } else {
         this._additionalImports.push(`import { GraphQLError } from 'graphql'`);
       }
@@ -195,7 +195,7 @@ ${extraVariables.join('\n')}
 const ec = new EC('secp256k1');
 export default class Eye {
   private client: GraphQLClient = new GQLClient('${WATSON_URL}');
-  private withWrapper: SdkFunctionWrapper = (action, _operationName, _operationType, _variables) => action();
+  private withWrapper: SdkFunctionWrapper = (action) => action();
   privateKey: string;
 
   constructor(input: EyeInput) {
