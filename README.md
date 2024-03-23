@@ -11,7 +11,7 @@ eyeofsauron is a command-line tool designed to generate the necessary files that
 
 ### Prerequisites
 
-- [NodeJS](https://nodejs.org/) - version 16.x or higher
+- [NodeJS](https://nodejs.org/) - version 18.x or higher
 
 ### Installing eyeofsauron
 

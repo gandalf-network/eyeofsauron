@@ -1,6 +1,6 @@
 {
   "name": "@gandalf-network/eyeofsauron",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "dist/index.js",
   "bin": {
@@ -13,6 +13,9 @@
     "test": "npx jest",
     "prebuild": "node prebuild-script.ts",
     "build": "tsc && copyfiles -u 1 src/**/*.txt dist/"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "keywords": [],
   "author": "gandalf-network",
