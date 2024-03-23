@@ -33,7 +33,9 @@ eyeofsauron generate
 
 - -f, --folder [folder]: Set the destination folder for the generated files
 
-- -j, --javascript : Specify if the generated files should be compiled to Javascript.
+- -js, --javascript : Specify if the generated files should be Javascript files (default).
+
+- -ts, --typescript : Specify if the generated files should be TypeScript files.
 
 ### Using the Generated Files
 
