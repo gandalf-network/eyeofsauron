@@ -37,7 +37,7 @@ eyeofsauron generate
 
 - --c, --commonJS : Generate JavaScript files as CommonJS modules, using `require` statements for module imports.
 
-- -ts, --typescript : Specify if the generated files should be TypeScript files.
+- -ts, --typescript : Generate TypeScript files.
 
 ### Using the Generated Files
 
