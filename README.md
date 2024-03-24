@@ -35,7 +35,7 @@ eyeofsauron generate
 
 - -esm, --esModules : Specify if the generated files should be Javascript ESModule files (Uses import statements).
 
-- -esm, --commonJS : Specify if the generated files should be Javascript CommonJS files (Uses require statements).
+- -c, --commonJS : Specify if the generated files should be Javascript CommonJS files (Uses require statements).
 
 - -ts, --typescript : Specify if the generated files should be TypeScript files.
 
@@ -46,7 +46,7 @@ Once you have successfully generated the necessary files and installed the requi
 #### Initialization
 
 ```typescript
-// index.ts
+// Typescript
 
 // Change eyeofsauron to whatever name you specified for the file generation
 import Eye, { Source } from './eyeofsauron';
@@ -55,8 +55,8 @@ const privateKey = process.env.PRIVATE_KEY
 const eye = new Eye({ privateKey })
 ```
 
-```ESModules
-// index.js
+```javascript
+// ESModules
 
 // Change eyeofsauron to whatever name you specified for the file generation
 import Eye, { Source } from './eyeofsauron/index.js'
@@ -65,8 +65,8 @@ const privateKey = process.env.PRIVATE_KEY
 const eye = new Eye({ privateKey })
 ```
 
-```CommonJS
-// index.js
+```javascript
+// CommonJS
 
 // Change eyeofsauron to whatever name you specified for the file generation
 const Eye = require('./eyeofsauron').default
