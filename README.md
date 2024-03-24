@@ -33,11 +33,11 @@ eyeofsauron generate
 
 - -f, --folder [folder]: Set the destination folder for the generated files
 
-- -esm, --esModules : Specify if the generated files should be Javascript ESModule files (Uses import statements).
-
 - --esm, --esModules : Generate JavaScript files as ESModules, utilizing `import` statements for module imports.
 
 - --c, --commonJS : Generate JavaScript files as CommonJS modules, using `require` statements for module imports.
+
+- -ts, --typescript : Specify if the generated files should be TypeScript files.
 
 ### Using the Generated Files
 
