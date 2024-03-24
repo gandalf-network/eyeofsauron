@@ -1,8 +1,8 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
-async function generateFiles(folder: string) {
-  const filesToBeGenerated = [
+async function generateFiles(folder: string, esModules: boolean) {
+  let filesToBeGenerated = [
     {
       filename: './templates/errors.txt',
       location: 'errors.ts',
@@ -14,6 +14,20 @@ async function generateFiles(folder: string) {
   ]
 
   let completed = true
+
+  if (esModules) {
+    filesToBeGenerated = [
+      {
+        filename: './templates/errors.txt',
+        location: 'errors.ts',
+      },
+      {
+        filename: './templates/esm/index.txt',
+        location: 'index.ts',
+      },
+    ]
+  }
+  
   for (const i of filesToBeGenerated) {
     const textFilePath = join(__dirname, i.filename);
     const tsFilePath = `${folder}/${i.location}`;

@@ -53,4 +53,5 @@ export interface RawGraphQLRequestPluginConfig extends RawClientSideBasePluginCo
    * ```
    */
   extensionsType?: string;
+  esModules?: boolean;
 }
