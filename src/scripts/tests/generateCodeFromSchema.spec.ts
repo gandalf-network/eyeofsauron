@@ -9,14 +9,19 @@ describe('generateCodeFromSchema', () => {
     jest.clearAllMocks();
   });
 
+  const folder = '/some/folder';
+  const generateESMFiles = false;
+
   it('should generate code from schema successfully', async () => {
-    const folder = '/some/folder';
     const config: CodegenConfig = {
       schema: [{ [WATSON_URL]: {} }],
       documents: [`${folder}/gql/*.graphql`],
       generates: {
         [`${folder}/gql/__generated__/index.ts`]: {
           plugins: [expect.any(String), expect.any(String), expect.any(String)],
+          config: {
+            esModules: generateESMFiles,
+        },
           presetConfig: { gqlTagName: 'gql' },
         },
       },
@@ -24,17 +29,16 @@ describe('generateCodeFromSchema', () => {
       ignoreNoDocuments: true,
     };
 
-    const result = await generateCodeFromSchema(folder);
+    const result = await generateCodeFromSchema(folder, generateESMFiles);
     expect(generate).toHaveBeenCalledWith(config);
     expect(result).toBe(true);
   });
 
   it('should handle errors during code generation', async () => {
-    const folder = '/some/folder';
     const error = new Error('Error during code generation');
     (generate as jest.MockedFunction<typeof generate>).mockRejectedValueOnce(error);
 
-    const result = await generateCodeFromSchema(folder);
+    const result = await generateCodeFromSchema(folder, generateESMFiles);
     expect(result).toBe(false);
   });
 });
