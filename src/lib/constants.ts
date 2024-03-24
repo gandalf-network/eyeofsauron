@@ -1,1 +1,1 @@
-export const WATSON_URL = "http://localhost:8080/public/gql" as string;
+export const WATSON_URL = process.env.WATSON_URL as string;
