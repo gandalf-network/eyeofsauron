@@ -44,7 +44,10 @@ program
           type: 'list',
           name: 'moduleSystem',
           message: 'Select the Javascript Module system for generating the JS files:',
-          choices: ['ESModules', 'CommonJS'],
+          choices: [
+            'ESModules { import syntax: import Eye, { Source } from "./eyeofsauron/index.js" }', 
+            'CommonJS { import syntax: const Eye = require("./eyeofsauron").default }'
+          ],
           default: 'ESModules',
           when: (answers) => answers.language === 'javascript',
         },
