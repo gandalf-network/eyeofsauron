@@ -17,8 +17,8 @@ program
   .description('Generate the prebuilt functions')
   .option('-f, --folder <folder>', 'Set the destination folder for the generated files')
   .option('-ts, --typescript', 'Initialize as a TypeScript project.')
-  .option('-esm, --esModules', 'Initialize as an ESModules JavaScript project. (default)')
-  .option('-c, --commonJS', 'Initialize as a CommonJS JavaScript project.')
+  .option('-esm, --esModules', 'Initialize as an ESModules JavaScript project. i.e [ import Eye, { Source } from "./eyeofsauron/index.js" ]')
+  .option('-c, --commonJS', 'Initialize as a CommonJS JavaScript project. i.e [ const Eye = require("./eyeofsauron").default ]')
   .allowUnknownOption()
   .action(async (cliFlags) => {
     let { folder, typescript, commonJS } = cliFlags;
