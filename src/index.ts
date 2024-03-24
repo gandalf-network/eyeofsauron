@@ -46,11 +46,11 @@ program
           message: 'Select the Javascript Module system for generating the JS files:',
           choices: [
             {
-              name: 'ESModules - { import syntax: import Eye, { Source } from "./eyeofsauron/index.js" }.',
+              name: 'ESModules - { syntax: import Eye from "./eyeofsauron/index.js" }.',
               value: 'ESModules',
             },
             {
-              name: 'CommonJS  - { import syntax: const Eye = require("./eyeofsauron").default }.',
+              name: 'CommonJS  - { syntax: const Eye = require("./eyeofsauron").default }.',
               value: 'CommonJS',
             },
           ],
