@@ -14,6 +14,7 @@ import { WATSON_URL } from '../../constants.js';
 export interface GraphQLRequestPluginConfig extends ClientSideBasePluginConfig {
   rawRequest: boolean;
   extensionsType: string;
+  esModules: boolean;
 }
 
 let additionalExportedTypes = `
@@ -46,6 +47,7 @@ export class GraphQLRequestVisitor extends ClientSideBaseVisitor<
     super(schema, fragments, rawConfig, {
       rawRequest: getConfigValue(rawConfig.rawRequest, false),
       extensionsType: getConfigValue(rawConfig.extensionsType, 'any'),
+      esModules: getConfigValue(rawConfig.esModules, false),
     });
 
     autoBind(this);
@@ -63,15 +65,25 @@ export class GraphQLRequestVisitor extends ClientSideBaseVisitor<
     this._additionalImports.push(
         `import { GraphQLClient as GQLClient } from 'graphql-request';`,
     );
-
-    this._additionalImports.push(
-      `import { ec as EC } from 'elliptic';`,
-    );
-
-    this._additionalImports.push(
-      `import { GandalfErrorCode, GandalfError, handleErrors } from '../../errors';`,
-    );
-
+    
+    if (this.config.esModules) {
+      this._additionalImports.push(
+        `import pkg from 'elliptic';`,
+      );
+      this._additionalImports.push(
+        `const { ec: EC } = pkg;`,
+      );
+      this._additionalImports.push(
+        `import { GandalfErrorCode, GandalfError, handleErrors } from '../../errors.js';`,
+      );
+    } else {
+      this._additionalImports.push(
+        `import { ec as EC } from 'elliptic';`,
+      );
+      this._additionalImports.push(
+        `import { GandalfErrorCode, GandalfError, handleErrors } from '../../errors';`,
+      );
+    }
     if (this.config.rawRequest) {
       if (this.config.documentMode !== DocumentMode.string) {
         this._additionalImports.push(`import { print } from 'graphql'`);
@@ -112,7 +124,6 @@ export class GraphQLRequestVisitor extends ClientSideBaseVisitor<
     operationResultType: string,
     operationVariablesTypes: string,
   ): string {
-    console.log
     operationResultType = this._externalImportPrefix + operationResultType;
     operationVariablesTypes = this._externalImportPrefix + operationVariablesTypes;
 
