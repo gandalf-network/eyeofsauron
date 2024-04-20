@@ -65,25 +65,11 @@ export class GraphQLRequestVisitor extends ClientSideBaseVisitor<
     this._additionalImports.push(
         `import { GraphQLClient as GQLClient } from 'graphql-request';`,
     );
+
+    this._additionalImports.push(
+      `import { GandalfErrorCode, GandalfError, handleErrors } from '../../errors.js';`,
+    );
     
-    if (this.config.esModules) {
-      this._additionalImports.push(
-        `import pkg from 'elliptic';`,
-      );
-      this._additionalImports.push(
-        `const { ec: EC } = pkg;`,
-      );
-      this._additionalImports.push(
-        `import { GandalfErrorCode, GandalfError, handleErrors } from '../../errors.js';`,
-      );
-    } else {
-      this._additionalImports.push(
-        `import { ec as EC } from 'elliptic';`,
-      );
-      this._additionalImports.push(
-        `import { GandalfErrorCode, GandalfError, handleErrors } from '../../errors';`,
-      );
-    }
     if (this.config.rawRequest) {
       if (this.config.documentMode !== DocumentMode.string) {
         this._additionalImports.push(`import { print } from 'graphql'`);
@@ -203,7 +189,7 @@ export class GraphQLRequestVisitor extends ClientSideBaseVisitor<
     return `${additionalExportedTypes}
 
 ${extraVariables.join('\n')}
-const ec = new EC('secp256k1');
+
 export default class Eye {
   private client: GraphQLClient = new GQLClient('${WATSON_URL}');
   private withWrapper: SdkFunctionWrapper = (action) => action();
@@ -217,7 +203,7 @@ export default class Eye {
   }
 
   private async signRequestBody(requestBody: any): Promise<string> {
-    const privateKey = Eye.generatePrivateKeyFromHex(this.privateKey)
+    const privateKey = await Eye.generatePrivateKeyFromHex(this.privateKey)
     try {
       const hash = createHash('sha256').update(JSON.stringify(requestBody)).digest();
       const signature = privateKey.sign(hash);
@@ -240,8 +226,11 @@ export default class Eye {
     return headers;
   }
 
-  private static generatePrivateKeyFromHex(hexPrivateKey: string): EC.KeyPair {
+  private static async generatePrivateKeyFromHex(hexPrivateKey: string) {
     try {
+      const ecPromise = import('elliptic').then(elliptic => elliptic.default.ec);
+      const EC = await ecPromise;
+      const ec = new EC('secp256k1');
       const key = ec.keyFromPrivate(hexPrivateKey, 'hex');
       return key;
     } catch (error: any) {
