@@ -29,8 +29,8 @@ export async function installDependencies(packageManager: PackageManager, genera
     if (generateJSFiles) {
       devDependencies = {
         ...devDependencies,
-          "@babel/preset-env": "^7.24.0",
-          "@babel/preset-typescript": "^7.23.3",
+          "@babel/preset-env": "^7.24.7",
+          "@babel/preset-typescript": "^7.24.7",
       }
     }
     console.log("\nInstalling devDependencies:");

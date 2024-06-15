@@ -81,32 +81,30 @@ const eye = new Eye({ privateKey })
 ```typescript
 // index.ts
 
-async function getActivity() {
-    try {
-        const { data } = await eye.getActivity({
-            dataKey: "MY_DATA_KEY",
-            source: Source.Netflix,
-            limit: 10,
-            page: 1,
-        })
+try {
+    const { data } = await eye.getActivity({
+        dataKey: "MY_DATA_KEY",
+        source: Source.Netflix,
+        limit: 10,
+        page: 1,
+    })
 
-        const activities = data.data
+    const activities = data.data
 
-        for (const activity of activities) {
-            console.log(activity?.id)
+    for (const activity of activities) {
+        console.log(activity?.id)
 
-            const activityMetadata = activity?.metadata
+        const activityMetadata = activity?.metadata
 
-            if (activityMetadata?.__typename === "NetflixActivityMetadata") {
-                console.log(activityMetadata.title)
-                console.log(activityMetadata.date)
-                console.log(activityMetadata.subject)
-            }
+        if (activityMetadata?.__typename === "NetflixActivityMetadata") {
+            console.log(activityMetadata.title)
+            console.log(activityMetadata.date)
+            console.log(activityMetadata.subject)
         }
-
-    } catch (error: any) {
-        console.log(error)
     }
+
+} catch (error: any) {
+    console.log(error)
 }
 ```
 
@@ -115,23 +113,56 @@ async function getActivity() {
 ```typescript
 // index.ts
 
-async function lookupActivity() {
-    try {
-        const { data: activity } = await eye.lookupActivity({
-            dataKey: "MY_DATA_KEY",
-            activityId: "ACTIVITY_ID",
-        })
+try {
+    const { data: activity } = await eye.lookupActivity({
+        dataKey: "MY_DATA_KEY",
+        activityId: "ACTIVITY_ID",
+    })
 
-        console.log(activity.id)
+    console.log(activity.id)
 
-        if (activity.metadata.__typename === "NetflixActivityMetadata") {
-            console.log(activity.metadata.date)
-            console.log(activity.metadata.title)
-            console.log(activity.metadata.subject)
-        }
-    } catch (error: any) {
-        console.log(error)
+    if (activity.metadata.__typename === "NetflixActivityMetadata") {
+        console.log(activity.metadata.date)
+        console.log(activity.metadata.title)
+        console.log(activity.metadata.subject)
     }
+} catch (error: any) {
+    console.log(error)
+}
+```
+
+#### Get Traits
+
+```typescript
+// index.ts
+
+try {
+    const { data: activity } = await eye.getTraits({
+        dataKey: "MY_DATA_KEY",
+        source: Source.UBER,
+        labels: [TraitLabel.RATING, TraitLabel.TRIP_COUNT, TraitLabel.ACCOUNT_CREATED_ON],
+    })
+
+    console.log(activity)
+} catch (error: any) {
+    console.log(error)
+}
+```
+
+#### Lookup Traits
+
+```typescript
+// index.ts
+
+try {
+    const { data: activity } = await eye.lookupTrait({
+        dataKey: "MY_DATA_KEY",
+        traitId: "TRAIT_ID",
+    })
+
+    console.log(activity)
+} catch (error: any) {
+    console.log(error)
 }
 ```
 
