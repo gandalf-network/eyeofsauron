@@ -163,11 +163,11 @@ try {
 try {
     const { data: traits } = await eye.getTraits({
         dataKey: "MY_DATA_KEY",
-        source: Source.UBEREATS,
+        source: Source.UBER,
         labels: [TraitLabel.RATING, TraitLabel.TRIP_COUNT],
     })
 
-    console.log(trait)
+    console.log(traits)
     /*
     Returns
         [
