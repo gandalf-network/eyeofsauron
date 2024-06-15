@@ -81,32 +81,43 @@ const eye = new Eye({ privateKey })
 ```typescript
 // index.ts
 
-async function getActivity() {
-    try {
-        const { data } = await eye.getActivity({
-            dataKey: "MY_DATA_KEY",
-            source: Source.Netflix,
-            limit: 10,
-            page: 1,
-        })
+try {
+    const { data } = await eye.getActivity({
+        dataKey: "MY_DATA_KEY",
+        source: Source.Netflix,
+        limit: 10,
+        page: 1,
+    })
 
-        const activities = data.data
-
-        for (const activity of activities) {
-            console.log(activity?.id)
-
-            const activityMetadata = activity?.metadata
-
-            if (activityMetadata?.__typename === "NetflixActivityMetadata") {
-                console.log(activityMetadata.title)
-                console.log(activityMetadata.date)
-                console.log(activityMetadata.subject)
+    console.log(data)
+    /*
+    Returns
+    {
+        limit: 10,
+        total: 3409,
+        page: 1,
+        __typename: "ActivityResponse",
+        data: [
+            {
+                id: 'ACTIVITY_ID',
+                metadata: {
+                    title: "Judge Dee's Mystery: Season 1: Episode 3",
+                    subject: [
+                        { value: 'tt31473598', identifierType: 'IMDB' },
+                        { value: '10296096', identifierType: 'TVDB'}
+                    ],
+                    lastPlayedAt: '01/01/2024',
+                    __typename: 'NetflixActivityMetadata'
+                },
+                __typename: 'Activity'
             }
-        }
-
-    } catch (error: any) {
-        console.log(error)
+            ...,
+        ]
     }
+    */
+
+} catch (error: any) {
+    console.log(error)
 }
 ```
 
@@ -115,23 +126,99 @@ async function getActivity() {
 ```typescript
 // index.ts
 
-async function lookupActivity() {
-    try {
-        const { data: activity } = await eye.lookupActivity({
-            dataKey: "MY_DATA_KEY",
-            activityId: "ACTIVITY_ID",
-        })
+try {
+    const { data: activity } = await eye.lookupActivity({
+        dataKey: "MY_DATA_KEY",
+        activityId: "ACTIVITY_ID",
+    })
 
-        console.log(activity.id)
-
-        if (activity.metadata.__typename === "NetflixActivityMetadata") {
-            console.log(activity.metadata.date)
-            console.log(activity.metadata.title)
-            console.log(activity.metadata.subject)
+    console.log(activity)
+    /*
+    Returns
+        {
+            id: 'ACTIVITY_ID',
+            metadata: {
+                title: "Judge Dee's Mystery: Season 1: Episode 3",
+                subject: [
+                    { value: 'tt31473598', identifierType: 'IMDB' },
+                    { value: '10296096', identifierType: 'TVDB'}
+                ],
+                lastPlayedAt: '01/01/2024',
+                __typename: 'NetflixActivityMetadata'
+            },
+            __typename: 'Activity'
         }
-    } catch (error: any) {
-        console.log(error)
-    }
+    */
+
+} catch (error: any) {
+    console.log(error)
+}
+```
+
+#### Get Traits
+
+```typescript
+// index.ts
+
+try {
+    const { data: traits } = await eye.getTraits({
+        dataKey: "MY_DATA_KEY",
+        source: Source.UBEREATS,
+        labels: [TraitLabel.RATING, TraitLabel.TRIP_COUNT],
+    })
+
+    console.log(trait)
+    /*
+    Returns
+        [
+            {
+                id: 'TRAIT_ID',
+                source: 'UBER',
+                label: 'RATING',
+                value: '4.8',
+                timestamp: '2024-06-11T11:41:00.552647Z',
+                __typename: 'Trait'
+            },
+            {
+                id: 'TRAIT_ID',
+                source: 'UBER',
+                label: 'TRIP_COUNT',
+                value: '76',
+                timestamp: '2024-06-11T11:41:00.552647Z',
+                __typename: 'Trait'
+            },
+        ]
+    */
+} catch (error: any) {
+    console.log(error)
+}
+```
+
+#### Lookup Traits
+
+```typescript
+// index.ts
+
+try {
+    const { data: trait } = await eye.lookupTrait({
+        dataKey: "MY_DATA_KEY",
+        traitId: "TRAIT_ID",
+    })
+
+    console.log(trait)
+    /*
+    Returns
+        {
+            id: 'TRAIT_ID',
+            source: 'UBER',
+            label: 'RATING',
+            value: '4.8',
+            timestamp: '2024-06-11T11:41:00.552647Z',
+            __typename: 'Trait'
+        },
+    */
+} catch (error: any) {
+    console.log(error)
 }
 ```
 

@@ -60,7 +60,8 @@ async function generateOperationsFromSchema(url: string = "http://localhost:8080
     });
   });
 
-  const mod = removeTypeNamesFromAST(documentString);
+  let mod = removeTypeNamesFromAST(documentString);
+  mod = removeExclamationMarksFromNames(mod)
   return mod;
 }
 
@@ -99,6 +100,11 @@ function removeTypeNamesFromAST(ast: string) {
   const pattern = /(_query|_mutation|_subscription)/g;
 
   return ast.replace(pattern, '');
+}
+
+// The removes `!` from variables. This occurs because of a bug in the @graphql-tools/utils package
+function removeExclamationMarksFromNames(ast: string) {
+  return ast.replace(/(?<=NonNull)(!)/g, 'NonNull');
 }
 
 export default generateOperationsFromSchema;
