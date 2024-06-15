@@ -1,0 +1,26 @@
+diff --git a/node_modules/@graphql-tools/utils/cjs/build-operation-for-field.js b/node_modules/@graphql-tools/utils/cjs/build-operation-for-field.js
+index 6e1ab28..bdf30a6 100644
+--- a/node_modules/@graphql-tools/utils/cjs/build-operation-for-field.js
++++ b/node_modules/@graphql-tools/utils/cjs/build-operation-for-field.js
+@@ -300,7 +300,7 @@ function resolveField({ type, field, models, firstCall, path, ancestors, ignore,
+     if (fieldTypeMap.has(fieldPathStr) && fieldTypeMap.get(fieldPathStr) !== field.type.toString()) {
+         fieldName += field.type
+             .toString()
+-            .replace('!', 'NonNull')
++            .replace(/!/g, 'NonNull')
+             .replace('[', 'List')
+             .replace(']', '');
+     }
+diff --git a/node_modules/@graphql-tools/utils/esm/build-operation-for-field.js b/node_modules/@graphql-tools/utils/esm/build-operation-for-field.js
+index 5f995ca..72651ea 100644
+--- a/node_modules/@graphql-tools/utils/esm/build-operation-for-field.js
++++ b/node_modules/@graphql-tools/utils/esm/build-operation-for-field.js
+@@ -296,7 +296,7 @@ function resolveField({ type, field, models, firstCall, path, ancestors, ignore,
+     if (fieldTypeMap.has(fieldPathStr) && fieldTypeMap.get(fieldPathStr) !== field.type.toString()) {
+         fieldName += field.type
+             .toString()
+-            .replace('!', 'NonNull')
++            .replace(/!/g, 'NonNull')
+             .replace('[', 'List')
+             .replace(']', '');
+     }
